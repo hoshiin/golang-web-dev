@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/hoshiin/golang-web-dev/042_mongodb/06_hands-on/starting-code/models"
+	"github.com/hoshiin/golang-web-dev/042_mongodb/08_hands-on/models"
 	"github.com/julienschmidt/httprouter"
 	uuid "github.com/satori/go.uuid"
-	"gopkg.in/mgo.v2/bson"
 )
 
 type UserController struct {
@@ -21,12 +20,6 @@ func NewUserController(m map[string]models.User) *UserController {
 func (uc UserController) GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	// Grab id
 	id := p.ByName("id")
-
-	// Verify id is ObjectId hex representation, otherwise return status not found
-	if !bson.IsObjectIdHex(id) {
-		w.WriteHeader(http.StatusNotFound) // 404
-		return
-	}
 
 	// Retrieve user
 	u, ok := uc.session[id]
@@ -54,6 +47,7 @@ func (uc UserController) CreateUser(w http.ResponseWriter, r *http.Request, _ ht
 
 	// store the user in map
 	uc.session[id] = u
+	models.StoreUser(uc.session)
 
 	uj, _ := json.Marshal(u)
 
@@ -67,6 +61,8 @@ func (uc UserController) DeleteUser(w http.ResponseWriter, r *http.Request, p ht
 
 	// Delete user
 	delete(uc.session, id)
+
+	models.StoreUser(uc.session)
 
 	w.WriteHeader(http.StatusOK) // 200
 	fmt.Fprint(w, "Deleted user", id, "\n")

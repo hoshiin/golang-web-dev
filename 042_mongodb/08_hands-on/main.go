@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	"github.com/hoshiin/golang-web-dev/042_mongodb/06_hands-on/starting-code/controllers"
-	"github.com/hoshiin/golang-web-dev/042_mongodb/06_hands-on/starting-code/models"
+	"github.com/hoshiin/golang-web-dev/042_mongodb/08_hands-on/controllers"
+	"github.com/hoshiin/golang-web-dev/042_mongodb/08_hands-on/models"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -19,5 +19,5 @@ func main() {
 }
 
 func getSession() map[string]models.User {
-	return make(map[string]models.User)
+	return models.LoadUser()
 }
